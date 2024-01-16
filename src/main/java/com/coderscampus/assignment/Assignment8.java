@@ -5,6 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -14,8 +18,6 @@ public class Assignment8 {
     private AtomicInteger i = new AtomicInteger(0);
 
     public Assignment8() {
-    	
-    	
         try {
             // Make sure you download the output.txt file for Assignment 8
             // and place the file in the root of your Java project
@@ -59,5 +61,31 @@ public class Assignment8 {
         System.out.println("Done Fetching records " + start + " to " + (end));
         return newList;
     }
+    
+    public List<Integer>  getData () {
 
+    	Assignment8 assignment = new Assignment8();
+    	
+        ExecutorService fixedPool = Executors.newFixedThreadPool(16);
+        
+        for (int i=0; i<1000; i++) {
+        	CompletableFuture.supplyAsync(() -> assignment.getNumbers(), fixedPool);
+        }
+        fixedPool.shutdown();
+		return numbers;
+    }
+    
+    public void countAndPrintUniqueNumbers(List<Integer> allNumbers) {
+        Map<Integer, Long> occurrences = countUniqueNumbers(allNumbers);
+        printUniqueNumbers(occurrences);
+    }
+
+    public Map<Integer, Long> countUniqueNumbers(List<Integer> numbers) {
+        return numbers.parallelStream()
+                .collect(Collectors.groupingByConcurrent(number -> number, Collectors.counting()));
+    }
+
+    public void printUniqueNumbers(Map<Integer, Long> occurrences) {
+        occurrences.forEach((number, count) -> System.out.println(number + "=" + count));
+    }
 }
