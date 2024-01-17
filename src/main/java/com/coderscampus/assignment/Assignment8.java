@@ -19,8 +19,6 @@ public class Assignment8 {
 
 	public Assignment8() {
 		try {
-			// Make sure you download the output.txt file for Assignment 8
-			// and place the file in the root of your Java project
 			numbers = Files.readAllLines(Paths.get("output.txt")).stream().map(n -> Integer.parseInt(n))
 					.collect(Collectors.toList());
 		} catch (IOException e) {
@@ -44,8 +42,6 @@ public class Assignment8 {
 
 			System.out.println("Starting to fetch records " + start + " to " + (end));
 		}
-		// force thread to pause for half a second to simulate actual Http / API traffic
-		// delay
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
